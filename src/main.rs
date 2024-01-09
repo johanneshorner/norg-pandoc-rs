@@ -58,24 +58,11 @@ fn main() {
     let api_version = get_api_version();
 
     if input.is_file() {
-        let output = match output {
-            Some(mut output) => {
-                if output.is_file() {
-                    output
-                } else {
-                    let mut filename = PathBuf::new();
-                    filename.push(input.file_name().unwrap());
-                    filename.set_extension(&to);
-                    output.push(filename);
-                    output
-                }
-            }
-            None => {
-                let mut output = input.clone();
-                output.set_extension(&to);
-                output
-            }
-        };
+        let output = output.unwrap_or_else(|| {
+            let mut output = input.clone();
+            output.set_extension(&to);
+            output
+        });
         parse_file(
             &input,
             &to,
